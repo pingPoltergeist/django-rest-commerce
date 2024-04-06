@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from PRODUCT import api_views as product_api_views
 from HOME import api_views as home_api_views
-from SELLER import api_views as seller_api_views
+from SELLER import api_urls as seller_api_urls
 from USER import api_views as user_api_views
 from TRANSACTION import api_views as transactions_api_views
 from rest_framework_simplejwt import views as jwt_views
@@ -48,8 +48,7 @@ urlpatterns = [
     path('checkout/confirmation/', transactions_api_views.checkout_confirmation),
 
     # Seller
-    path('seller/', seller_api_views.seller),
-    path('seller/signup/', seller_api_views.seller_signup),
+    path('seller/', include(seller_api_urls)),
 
     # Hero
     path('heros/', home_api_views.get_all_banners),

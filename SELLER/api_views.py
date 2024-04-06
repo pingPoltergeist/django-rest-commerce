@@ -2,10 +2,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User as AuthUser
 from DRC.core.exceptions import ErrorResponse
+from PRODUCT.models import Product
 from SELLER.models import Seller
 from SELLER.serializers import SellerSerializer
 from rest_framework.permissions import IsAuthenticated
 from DRC.core.permissions import SellerOnly, VerifiedSeller
+from PRODUCT.serializers import ProductListSerializer, SingleProductSerializer
 
 
 @api_view(['POST'])
@@ -40,8 +42,25 @@ def seller_signup(request):
             return ErrorResponse(code=500, msg=ex.__str__(), details=ex.__str__()).response
 
 
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated, SellerOnly, VerifiedSeller])
 def seller(request):
     if request.method == 'GET':
         return Response(SellerSerializer(request.user.seller, many=False).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, SellerOnly, VerifiedSeller])
+def get_all_product_for_seller(request):
+    if request.method == 'GET':
+        product_qs = Product.objects.filter(seller__user=request.user)
+        return Response(ProductListSerializer(product_qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, SellerOnly, VerifiedSeller])
+def get_a_product_by_id_for_seller(request, product_id):
+    if request.method == 'GET':
+        product: Product = Product.objects.get(seller__user=request.user, product_id=str(product_id).strip())
+        return Response(SingleProductSerializer(product).data)
+
