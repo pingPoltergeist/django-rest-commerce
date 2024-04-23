@@ -65,10 +65,12 @@ class Permission(models.Model):
             return self.__CHOICES_LIST
 
     class ROLE:
+        CUSTOM = 0
         VIEWER = 1
         EDITOR = 2
         ADMIN = 3
         __CHOICE_LIST = [
+            (0, "Custom"),
             (1, "VIEWER"),
             (2, "EDITOR"),
             (3, "ADMIN"),
@@ -86,6 +88,12 @@ class Permission(models.Model):
 
     class Meta:
         unique_together = ('staff', 'organization')
+
+    def save(self, *args, **kwargs):
+        if not (self.role == Permission.ROLE.CUSTOM):
+            self.product = self.role
+            self.order = self.role
+        super(Permission, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.staff.username}-{self.organization.name}'
