@@ -1,5 +1,7 @@
 import USER.models
 from rest_framework import serializers
+
+from ORGANIZATION.models import Organization
 from PRODUCT.models import Product, Category, Review
 from USER.models import UserProfile
 from django.contrib.auth.models import User as AuthUser
@@ -112,11 +114,11 @@ class SingleProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_seller(product):
-        seller = product.seller
+        seller: Organization = product.seller
         return {
-            'id': seller.seller_id,
-            'name': seller.user.get_full_name(),
-            'image': seller.profile_image.url if seller.profile_image else None
+            'id': seller.id,
+            'name': seller.name,
+            'image': seller.logo.url if seller.logo else None
         }
 
     @staticmethod
