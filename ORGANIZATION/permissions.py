@@ -19,16 +19,20 @@ class StaffOfTheOrganization(BasePermission):
     def is_organization_admin(self, request):
         org: Organization = self.check_and_get_organization(request)
         if org:
-            permission: Permission = request.user.username.permission_set.get(organization=org)
+            permission: Permission = request.user.permission_set.get(organization=org)
             return bool(permission.role == Permission.ROLE.ADMIN)
         else:
             return False
 
+    def check_and_get_staff_of_the_organization(self, request):
+        org: Organization = self.check_and_get_organization(request)
+        staff_qs = Permission.objects.filter(organization=org, staff=request.user)
+        return staff_qs.first() if staff_qs else None
+
     def is_staff_of_the_organization(self, request):
         if self.is_organization_admin(request) or self.is_organization_owner(request):
             return True
-        org: Organization = self.check_and_get_organization(request)
-        return bool(org.staff.filter(staff=request.user.username)) if org else False
+        return bool(self.check_and_get_staff_of_the_organization(request))
 
     def has_permission(self, request, view):
         return self.is_staff_of_the_organization(request)

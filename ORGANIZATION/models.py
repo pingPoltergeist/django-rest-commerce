@@ -89,6 +89,24 @@ class Permission(models.Model):
     class Meta:
         unique_together = ('staff', 'organization')
 
+    def have_product_view_permission(self):
+        return bool(Permission.PRODUCT_PERMISSION.ALL_PERMISSION >= self.product >= Permission.PRODUCT_PERMISSION.VIEW_PERMISSION)
+
+    def have_product_view_edit_permission(self):
+        return bool(Permission.PRODUCT_PERMISSION.ALL_PERMISSION >= self.product >= Permission.PRODUCT_PERMISSION.VIEW_EDIT_PERMISSION)
+
+    def have_all_product_permission(self):
+        return bool(Permission.PRODUCT_PERMISSION.ALL_PERMISSION >= self.product >= Permission.PRODUCT_PERMISSION.ALL_PERMISSION)
+
+    def have_order_view_permission(self):
+        return bool(Permission.ORDER_PERMISSION.EXECUTE_OR_REJECT_PERMISSION >= self.order >= Permission.ORDER_PERMISSION.VIEW_PERMISSION)
+
+    def have_order_execute_permission(self):
+        return bool(Permission.ORDER_PERMISSION.EXECUTE_OR_REJECT_PERMISSION >= self.order >= Permission.ORDER_PERMISSION.EXECUTE_PERMISSION)
+
+    def have_order_execute_or_reject_permission(self):
+        return bool(Permission.ORDER_PERMISSION.EXECUTE_OR_REJECT_PERMISSION >= self.order >= Permission.ORDER_PERMISSION.EXECUTE_OR_REJECT_PERMISSION)
+
     def save(self, *args, **kwargs):
         if not (self.role == Permission.ROLE.CUSTOM):
             self.product = self.role
