@@ -3,6 +3,8 @@ from datetime import datetime
 from threading import *
 from django.utils import timezone
 from django.db import models
+
+from ORGANIZATION.models import Organization
 from SELLER.models import Seller
 from DRC.core.exceptions import ErrorResponse
 from DRC.core.DRCCommonUtil import KEYGEN
@@ -119,7 +121,7 @@ class Product(models.Model):
     optional_image_3 = models.ImageField(upload_to=generate_file_path, null=True, blank=True)
 
     # Group
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Organization, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category)
 
     # Sells
