@@ -12,6 +12,7 @@ import os
 import socket
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlparse
 
 from django.core.management.commands import runserver
 
@@ -112,6 +113,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = CONFIG.CORS_ALLOWED_ORIGIN
+CORS_ALLOWED_ORIGINS = [
+    origin for origin in CORS_ALLOWED_ORIGINS
+    if (parsed := urlparse(origin)).scheme and parsed.netloc
+]
 CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
